@@ -1,0 +1,13 @@
+# Python junk
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# macOS junk
+.DS_Store
+
+# THE MOST IMPORTANT LINE (Cybersecurity)
+.env

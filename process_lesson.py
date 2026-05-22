@@ -82,4 +82,29 @@ print(final_recap)
 with open(recap_output, "w") as f:
     f.write(final_recap)
 
+# === NEW CLOSED-LOOP STATE PERSISTENCE (WITH TRANSCRIPT ARCHIVING) ===
+from datetime import datetime
+
+print(f"💾 Step 4: Synchronizing execution artifacts back to '{DB_FILE}'...")
+
+# 1. Generate the dynamic transactional log entry with raw audit text
+new_lesson_log = {
+    "date": datetime.now().strftime("%Y-%m-%d"),
+    "recap_file": recap_output,
+    "raw_transcript": transcript.text,  # Archives the raw Whisper audio output
+    "metrics": {
+        "status": "processed",
+        "engine": "gpt-4o"
+    }
+}
+
+# 2. Mutate the state of the local database object in memory
+database["students"][STUDENT_NAME]["lesson_history"].append(new_lesson_log)
+
+# 3. Serialize and write the updated ledger back to the flat-file disk storage
+with open(DB_FILE, "w") as f:
+    json.dump(database, f, indent=2)
+
+print(f"🔒 TRANSACTION COMPLETE: Database updated and transcript archived successfully.")
+# =====================================================================
 print(f"✅ SUCCESS: {STUDENT_NAME}'s mastered recap is ready at {recap_output}\n")

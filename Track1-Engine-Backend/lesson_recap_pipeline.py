@@ -21,7 +21,7 @@ import re
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Generator, Optional
 
 from sqlalchemy import (
     Column,
@@ -196,6 +196,13 @@ def _get_session() -> Session:
         init_db()
     return _SessionFactory()  # type: ignore[misc]
 
+def get_db() -> Generator[Session, None, None]:
+    """FastAPI dependency that yields a database session."""
+    db = _get_session()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # ===========================================================================
 # PART 2: LOGIC ENGINE
